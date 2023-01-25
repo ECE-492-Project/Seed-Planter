@@ -1,15 +1,17 @@
+import { rectangle } from "leaflet";
 import {
+  LayersControl,
   Marker,
   Popup,
   LayerGroup,
   Circle,
   FeatureGroup,
   Rectangle,
-  rectangle,
-} from "leaflet";
-import { LayersControl } from "react-leaflet";
+} from "react-leaflet";
+import { DEFAULT_CENTER } from "./Map";
 
 export default function MapTypeController() {
+  const center = DEFAULT_CENTER;
   return (
     <LayersControl position="topright">
       <LayersControl.Overlay name="Marker with popup">
@@ -45,7 +47,7 @@ export default function MapTypeController() {
         <FeatureGroup pathOptions={{ color: "purple" }}>
           <Popup>Popup in FeatureGroup</Popup>
           <Circle center={[51.51, -0.06]} radius={200} />
-          <Rectangle bounds={rectangle} />
+          {/* <Rectangle bounds={rectangle} /> */}
         </FeatureGroup>
       </LayersControl.Overlay>
     </LayersControl>

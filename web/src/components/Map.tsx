@@ -1,50 +1,36 @@
-import { useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-  Tooltip,
-} from "react-leaflet";
+import { ControlsContext } from "@/pages";
+import { LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { get } from "lodash";
+import { useContext } from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
+import { MAP_TILES } from "./Controls";
+import LocationMarker from "./LocationMarker";
+import MapTypeController from "./MapTypeController";
+import { NAV_HEIGHT } from "./Navbar";
 
-function LocationMarker() {
-  const [position, setPosition] = useState(null);
-  const map = useMapEvents({
-    click() {
-      map.locate();
-    },
-    locationfound(e) {
-      setPosition(e.latlng);
-      map.flyTo(e.latlng, map.getZoom());
-    },
-  });
+export const DEFAULT_CENTER: LatLngExpression = [53.527, -113.53];
 
-  return position === null ? null : (
-    <Marker position={position}>
-      <Popup>You are here</Popup>
-    </Marker>
-  );
-}
 export default function Map() {
-  const position = [51.505, -0.09];
+  const { values } = useContext(ControlsContext);
 
   return (
     <MapContainer
-      center={{ lat: 51.505, lng: -0.09 }}
+      center={DEFAULT_CENTER}
       zoom={13}
-      scrollWheelZoom={false}
-      style={{ display: "flex" }}
+      preferCanvas
+      style={{ height: `calc(100vh - ${NAV_HEIGHT})`, width: "100%" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url={get(values, "mapTile", MAP_TILES[0]["url"])}
       />
-      {/* <LocationMarker />
-      <Marker position={[51.51, -0.09]} draggable>
+      <LocationMarker />
+      {/* <Marker position={[51.51, -0.09]} draggable>
         <Popup>Popup for Marker</Popup>
         <Tooltip>Tooltip for Marker</Tooltip>
       </Marker> */}
+      <MapTypeController />
     </MapContainer>
   );
 }
