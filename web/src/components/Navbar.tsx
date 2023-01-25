@@ -1,3 +1,4 @@
+import { PlayCircleOutline } from "@mui/icons-material";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
@@ -34,6 +35,14 @@ export default function Navbar() {
         </Typography>
 
         <Controls />
+
+        <Button
+          variant="contained"
+          startIcon={<PlayCircleOutline />}
+          sx={{ ml: "auto" }}
+        >
+          Start Planting
+        </Button>
       </Toolbar>
     </AppBar>
   );

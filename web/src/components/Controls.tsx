@@ -41,7 +41,7 @@ export default function Controls() {
   const [mapView, setMapView] = useState(MAP_TILES[0]["url"]);
 
   return (
-    <Stack direction="row" spacing={2} ml={14}>
+    <Stack direction="row" spacing={2} mx="auto">
       <FormControl>
         <InputLabel>Seed Type</InputLabel>
         <Select
