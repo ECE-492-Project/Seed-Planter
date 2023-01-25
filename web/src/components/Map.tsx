@@ -20,7 +20,11 @@ export default function Map() {
       center={DEFAULT_CENTER}
       zoom={15}
       preferCanvas
-      style={{ height: `calc(100vh - ${NAV_HEIGHT})`, width: "100%" }}
+      style={{
+        height: `calc(100vh - ${NAV_HEIGHT})`,
+        width: "100%",
+        cursor: "crosshair",
+      }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

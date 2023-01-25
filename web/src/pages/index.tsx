@@ -1,10 +1,11 @@
+import { SEED_OPTIONS } from "@/components/Controls";
 import Navbar from "@/components/Navbar";
 import { Box, LinearProgress } from "@mui/material";
 import dynamic from "next/dynamic";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 
 export const ControlsContext = createContext<{
-  values: any;
+  values: { seed: string; numSeeds: number };
   setValues: any;
   setValue: any;
 }>({} as any);
@@ -26,7 +27,16 @@ export default function Home() {
     setValues({ ...values, [field]: value });
 
   return (
-    <ControlsContext.Provider value={{ values, setValues, setValue }}>
+    <ControlsContext.Provider
+      value={{
+        values: {
+          seed: SEED_OPTIONS[0],
+          numSeeds: 1,
+        },
+        setValues,
+        setValue,
+      }}
+    >
       <Box>
         <Navbar />
         <Map />
