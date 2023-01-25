@@ -5,8 +5,9 @@ import { get } from "lodash";
 import { useContext } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { MAP_TILES } from "./Controls";
+import { Legend } from "./Legend";
 import LocationMarker from "./LocationMarker";
-import MapTypeController from "./MapTypeController";
+import Coordinates from "./Coordinates";
 import { NAV_HEIGHT } from "./Navbar";
 
 export const DEFAULT_CENTER: LatLngExpression = [53.527, -113.53];
@@ -17,7 +18,7 @@ export default function Map() {
   return (
     <MapContainer
       center={DEFAULT_CENTER}
-      zoom={13}
+      zoom={15}
       preferCanvas
       style={{ height: `calc(100vh - ${NAV_HEIGHT})`, width: "100%" }}
     >
@@ -26,11 +27,9 @@ export default function Map() {
         url={get(values, "mapTile", MAP_TILES[0]["url"])}
       />
       <LocationMarker />
-      {/* <Marker position={[51.51, -0.09]} draggable>
-        <Popup>Popup for Marker</Popup>
-        <Tooltip>Tooltip for Marker</Tooltip>
-      </Marker> */}
-      <MapTypeController />
+
+      <Coordinates />
+      <Legend />
     </MapContainer>
   );
 }

@@ -15,6 +15,8 @@ import { get } from "lodash";
 import { useContext, useState } from "react";
 
 export const SEED_OPTIONS = ["Seed 1", "Seed 2", "Seed 3", "Seed 4"];
+export const SEED_COLORS = ["red", "green", "blue", "orange"];
+
 export const MAP_TILES = [
   {
     label: "Satellite",
@@ -67,7 +69,7 @@ export default function Controls() {
         helperText={error ? `Must be between 1 and ${MAX_SEEDS}` : ""}
         onChange={(e) => {
           if (isValidNumOfSeeds(e.target.value as any)) {
-            setValue("numOfSeeds", e.target.value);
+            setValue("numSeeds", e.target.value);
             setError(false);
           } else setError(true);
         }}

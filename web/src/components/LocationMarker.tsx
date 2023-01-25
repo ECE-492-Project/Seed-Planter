@@ -18,14 +18,14 @@ export default function LocationMarker() {
     <LayerGroup>
       <Circle
         center={position}
-        pathOptions={{ fillColor: "blue", fillOpacity: 1 }}
-        radius={100}
+        pathOptions={{ fillColor: "#3488ff", fillOpacity: 1 }}
+        radius={50}
         stroke={false}
       />
       <Circle
         center={position}
         pathOptions={{ fillColor: "blue" }}
-        radius={200}
+        radius={100}
       />
     </LayerGroup>
   );
