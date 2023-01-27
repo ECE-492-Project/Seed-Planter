@@ -12,6 +12,7 @@ const nextConfig = {
   env: {
     pathPrefix,
   },
+  basePath: pathPrefix,
 };
 
 module.exports = nextConfig;
