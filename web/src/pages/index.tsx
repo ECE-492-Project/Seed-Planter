@@ -1,46 +1,51 @@
-import { SEED_OPTIONS } from "@/components/Controls";
+import { MAP_TILES, SEED_OPTIONS } from "@/components/Controls";
 import Navbar from "@/components/Navbar";
 import { Box, LinearProgress } from "@mui/material";
 import dynamic from "next/dynamic";
-import { createContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-export const ControlsContext = createContext<{
-  values: { seed: string; numSeeds: number };
-  setValues: any;
-  setValue: any;
-}>({} as any);
+export interface Props {
+  seed: string;
+  setSeed: (seed: string) => void;
+  numSeeds: number;
+  setNumSeeds: (numSeeds: number) => void;
+  mapTile: string;
+  setMapTile: (mapTile: string) => void;
+}
 
 export default function Home() {
-  const [values, setValues] = useState({});
+  const [seed, setSeed] = useState(SEED_OPTIONS[0]);
+  const [numSeeds, setNumSeeds] = useState(1);
+  const [mapTile, setMapTile] = useState(MAP_TILES["Satellite"]["url"]);
 
   // https://stackoverflow.com/a/64634759
   const Map = useMemo(
     () =>
-      dynamic(() => import("@/components/Map" as string), {
+      dynamic<Props>(() => import("@/components/Map" as string), {
         loading: () => <LinearProgress />,
         ssr: false,
       }),
     []
   );
 
-  const setValue = (field: string, value: any) =>
-    setValues({ ...values, [field]: value });
-
   return (
-    <ControlsContext.Provider
-      value={{
-        values: {
-          seed: SEED_OPTIONS[0],
-          numSeeds: 1,
-        },
-        setValues,
-        setValue,
-      }}
-    >
-      <Box>
-        <Navbar />
-        <Map />
-      </Box>
-    </ControlsContext.Provider>
+    <Box>
+      <Navbar
+        seed={seed}
+        setSeed={setSeed}
+        numSeeds={numSeeds}
+        setNumSeeds={setNumSeeds}
+        mapTile={mapTile}
+        setMapTile={setMapTile}
+      />
+      <Map
+        seed={seed}
+        setSeed={setSeed}
+        numSeeds={numSeeds}
+        setNumSeeds={setNumSeeds}
+        mapTile={mapTile}
+        setMapTile={setMapTile}
+      />
+    </Box>
   );
 }

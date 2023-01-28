@@ -10,6 +10,7 @@
     "export": "next export"
   },
   "dependencies": {
+    "@babel/runtime": "^7.20.13",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
@@ -27,9 +28,17 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-leaflet": "^4.2.0",
+    "react-leaflet-enhanced-marker": "^1.0.21",
     "typescript": "4.9.4"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.0"
+  },
+  "overrides": {
+    "react-leaflet-enhanced-marker": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "react-leaflet": "$react-leaflet"
+    }
   }
 }

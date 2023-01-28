@@ -1,19 +1,16 @@
-import { ControlsContext } from "@/pages";
+import { Props } from "@/pages";
 import { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { get } from "lodash";
-import { useContext } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { MAP_TILES } from "./Controls";
+import Coordinates from "./Coordinates";
 import { Legend } from "./Legend";
 import LocationMarker from "./LocationMarker";
-import Coordinates from "./Coordinates";
 import { NAV_HEIGHT } from "./Navbar";
 
 export const DEFAULT_CENTER: LatLngExpression = [53.527, -113.53];
 
-export default function Map() {
-  const { values } = useContext(ControlsContext);
+export default function Map(props: Props) {
+  const { mapTile } = props;
 
   return (
     <MapContainer
@@ -28,11 +25,11 @@ export default function Map() {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url={get(values, "mapTile", MAP_TILES[0]["url"])}
+        url={mapTile}
       />
       <LocationMarker />
 
-      <Coordinates />
+      <Coordinates {...props} />
       <Legend />
     </MapContainer>
   );

@@ -1,22 +1,23 @@
-import { ControlsContext } from "@/pages";
+import { Props } from "@/pages";
 import { LatLng } from "leaflet";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   LayerGroup,
   LayersControl,
-  Marker,
   Tooltip,
   useMapEvents,
 } from "react-leaflet";
 import { SEED_OPTIONS } from "./Controls";
+// @ts-ignore
+import Marker from "react-leaflet-enhanced-marker";
+import SeedMarker from "./SeedMarker";
 
 export interface Coordinate {
   seed: string;
   numSeeds: number;
   latlng: LatLng;
 }
-export default function Coordinates() {
-  const { values } = useContext(ControlsContext);
+export default function Coordinates({ seed, numSeeds }: Props) {
   const [coords, setCoords] = useState<Coordinate[]>([]);
 
   const map = useMapEvents({
@@ -24,14 +25,12 @@ export default function Coordinates() {
       console.log("Adding coordinate: ", latlng);
       const newCoord = {
         latlng,
-        seed: values.seed,
-        numSeeds: values.numSeeds,
+        seed: seed,
+        numSeeds: numSeeds,
       };
       setCoords([...coords, newCoord]);
     },
   });
-
-  console.log("GERE:", coords);
 
   return (
     <LayersControl position="topright">
@@ -41,9 +40,14 @@ export default function Coordinates() {
             {coords
               .filter((coord: Coordinate) => coord.seed === seed)
               .map((coord: Coordinate, j) => (
-                <Marker position={coord.latlng} draggable key={j}>
+                <Marker
+                  icon={<SeedMarker />}
+                  position={coord.latlng}
+                  key={"seed" + j}
+                  draggable
+                >
                   <Tooltip>
-                    {seed} &#40;{coord.numSeeds}&#41;
+                    {seed} &#40;x{coord.numSeeds}&#41;
                   </Tooltip>
                 </Marker>
               ))}

@@ -1,3 +1,4 @@
+import { Props } from "@/pages";
 import { PlayCircleOutline } from "@mui/icons-material";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import Head from "next/head";
@@ -7,7 +8,7 @@ import Controls from "./Controls";
 export const NAV_HEIGHT = "100px";
 const NAV_BGCOLOR = "#f3dabc";
 
-export default function Navbar() {
+export default function Navbar(props: Props) {
   return (
     <AppBar
       position="static"
@@ -34,7 +35,7 @@ export default function Navbar() {
           <strong>R</strong>obot
         </Typography>
 
-        <Controls />
+        <Controls {...props} />
 
         <Button
           variant="contained"

@@ -1,4 +1,4 @@
-import { ControlsContext } from "@/pages";
+import { Props } from "@/pages";
 import { SatelliteAlt, Signpost } from "@mui/icons-material";
 import {
   FormControl,
@@ -11,45 +11,45 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import { get } from "lodash";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 export const SEED_OPTIONS = ["Seed 1", "Seed 2", "Seed 3", "Seed 4"];
 export const SEED_COLORS = ["red", "green", "blue", "orange"];
 
-export const MAP_TILES = [
-  {
-    label: "Satellite",
+export const MAP_TILES = {
+  Satellite: {
     icon: <SatelliteAlt />,
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
   },
-  {
-    label: "Road",
+  Road: {
     icon: <Signpost />,
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   },
-];
+};
 
 const MAX_SEEDS = 10;
 function isValidNumOfSeeds(num: number) {
   return !!num && num >= 1 && num <= MAX_SEEDS;
 }
 
-export default function Controls() {
-  const { values, setValue } = useContext(ControlsContext);
+export default function Controls({
+  seed,
+  setSeed,
+  numSeeds,
+  setNumSeeds,
+  mapTile,
+  setMapTile,
+}: Props) {
   const [error, setError] = useState(false);
-  const [mapView, setMapView] = useState(MAP_TILES[0]["url"]);
 
   return (
     <Stack direction="row" spacing={2} mx="auto">
       <FormControl>
         <InputLabel>Seed Type</InputLabel>
         <Select
-          value={get(values, "seedType", SEED_OPTIONS[0])}
+          value={seed}
           label="Seed Type"
-          onChange={(e: SelectChangeEvent) =>
-            setValue("seedType", e.target.value)
-          }
+          onChange={(e: SelectChangeEvent) => setSeed(e.target.value)}
           sx={{ width: "200px" }}
         >
           {SEED_OPTIONS.map((seed, i) => (
@@ -63,13 +63,13 @@ export default function Controls() {
       <TextField
         type="number"
         label="Num of Seeds"
-        defaultValue={1}
+        defaultValue={numSeeds}
         InputProps={{ inputProps: { min: 1, max: MAX_SEEDS, step: 1 } }}
         error={error}
         helperText={error ? `Must be between 1 and ${MAX_SEEDS}` : ""}
         onChange={(e) => {
           if (isValidNumOfSeeds(e.target.value as any)) {
-            setValue("numSeeds", e.target.value);
+            setNumSeeds(Number(e.target.value));
             setError(false);
           } else setError(true);
         }}
@@ -88,18 +88,13 @@ export default function Controls() {
           View
         </InputLabel>
         <ToggleButtonGroup
-          value={mapView}
+          value={mapTile}
           exclusive
-          onChange={(e, newValue) => {
-            if (!!newValue) {
-              setValue("mapTile", newValue);
-              setMapView(newValue as any);
-            }
-          }}
+          onChange={(e, newValue) => !!newValue && setMapTile(newValue)}
         >
-          {MAP_TILES.map((tile, i) => (
-            <ToggleButton value={tile["url"]} key={i}>
-              {tile["icon"]}
+          {Object.entries(MAP_TILES).map(([key, value], i) => (
+            <ToggleButton value={value["url"]} key={i}>
+              {value["icon"]}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
