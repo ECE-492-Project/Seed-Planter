@@ -24,7 +24,7 @@ export default function Navbar(props: Props) {
           <title key="title">Seed Planting Robot</title>
         </Head>
 
-        <Image src="/logo.png" alt="" width={100} height={100} />
+        <Image src="logo.png" alt="" width={100} height={100} />
         <Typography
           variant="h5"
           component="span"

@@ -13,8 +13,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
+// ADD SEEDS HERE
 export const SEED_OPTIONS = ["Seed 1", "Seed 2", "Seed 3", "Seed 4"];
 export const SEED_COLORS = ["red", "green", "blue", "orange"];
+
+export const SEED_TO_COLORS = {} as { [key: string]: string };
+for (let i = 0; i < SEED_OPTIONS.length; i++)
+  SEED_TO_COLORS[SEED_OPTIONS[i]] = SEED_COLORS[i];
 
 export const MAP_TILES = {
   Satellite: {

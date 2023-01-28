@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Circle, LayerGroup, useMap } from "react-leaflet";
+import { Circle, LayerGroup, Marker, Tooltip, useMap } from "react-leaflet";
 
 export default function LocationMarker() {
   const [position, setPosition] = useState(null);
@@ -15,18 +15,8 @@ export default function LocationMarker() {
 
   if (!position) return null;
   return (
-    <LayerGroup>
-      <Circle
-        center={position}
-        pathOptions={{ fillColor: "#3488ff", fillOpacity: 1 }}
-        radius={50}
-        stroke={false}
-      />
-      <Circle
-        center={position}
-        pathOptions={{ fillColor: "blue" }}
-        radius={100}
-      />
-    </LayerGroup>
+    <Marker position={position}>
+      <Tooltip>My current location</Tooltip>
+    </Marker>
   );
 }

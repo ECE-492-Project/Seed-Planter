@@ -4,9 +4,9 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <link key="favicon" rel="shortcut icon" href="/favicon.ico" />
+        <link key="favicon" rel="shortcut icon" href="favicon.ico" />
         <meta key="ogTitle" property="og:title" content="Seed Planting Robot" />
-        <meta key="ogImage" property="og:image" content="/logo2.jpeg" />
+        <meta key="ogImage" property="og:image" content="logo2.jpeg" />
         <meta
           key="ogDescription"
           property="og:description"

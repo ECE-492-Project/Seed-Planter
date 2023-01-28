@@ -1,17 +1,19 @@
 import { Props } from "@/pages";
-import { LatLng } from "leaflet";
+import { styled } from "@mui/material";
+import { LatLng, LeafletMouseEvent } from "leaflet";
 import { useState } from "react";
 import {
+  CircleMarker,
   LayerGroup,
   LayersControl,
   Tooltip,
   useMapEvents,
 } from "react-leaflet";
-import { SEED_OPTIONS } from "./Controls";
-// @ts-ignore
-import Marker from "react-leaflet-enhanced-marker";
-import SeedMarker from "./SeedMarker";
+import { SEED_OPTIONS, SEED_TO_COLORS } from "./Controls";
 
+const SeedMarker = styled(CircleMarker)(({ theme }) => ({
+  // cursor: "no-drop !important",
+}));
 export interface Coordinate {
   seed: string;
   numSeeds: number;
@@ -22,6 +24,7 @@ export default function Coordinates({ seed, numSeeds }: Props) {
 
   const map = useMapEvents({
     click({ latlng }) {
+      // Add coordinate on map click
       console.log("Adding coordinate: ", latlng);
       const newCoord = {
         latlng,
@@ -31,6 +34,10 @@ export default function Coordinates({ seed, numSeeds }: Props) {
       setCoords([...coords, newCoord]);
     },
   });
+  const deleteCoord = (e: LeafletMouseEvent) => {
+    console.log("Deleting coordinate: ", e.latlng);
+    setCoords(coords.filter((c) => c.latlng !== e.latlng));
+  };
 
   return (
     <LayersControl position="topright">
@@ -40,16 +47,20 @@ export default function Coordinates({ seed, numSeeds }: Props) {
             {coords
               .filter((coord: Coordinate) => coord.seed === seed)
               .map((coord: Coordinate, j) => (
-                <Marker
-                  icon={<SeedMarker />}
-                  position={coord.latlng}
+                <SeedMarker
+                  center={coord.latlng}
                   key={"seed" + j}
-                  draggable
+                  radius={10}
+                  color={SEED_TO_COLORS[seed]}
+                  eventHandlers={{ click: deleteCoord }}
+                  bubblingMouseEvents={false} // prevent map click
                 >
                   <Tooltip>
                     {seed} &#40;x{coord.numSeeds}&#41;
+                    <br />
+                    <em>Click to delete</em>
                   </Tooltip>
-                </Marker>
+                </SeedMarker>
               ))}
           </LayerGroup>
         </LayersControl.Overlay>
