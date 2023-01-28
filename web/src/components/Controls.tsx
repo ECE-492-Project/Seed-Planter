@@ -10,6 +10,7 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -56,6 +57,7 @@ export default function Controls({
           label="Seed Type"
           onChange={(e: SelectChangeEvent) => setSeed(e.target.value)}
           sx={{ width: "200px" }}
+          required
         >
           {SEED_OPTIONS.map((seed, i) => (
             <MenuItem key={i} value={seed}>
@@ -79,6 +81,7 @@ export default function Controls({
           } else setError(true);
         }}
         sx={{ width: "200px" }}
+        required
       />
 
       <Stack
@@ -98,8 +101,8 @@ export default function Controls({
           onChange={(e, newValue) => !!newValue && setMapTile(newValue)}
         >
           {Object.entries(MAP_TILES).map(([key, value], i) => (
-            <ToggleButton value={value["url"]} key={i}>
-              {value["icon"]}
+            <ToggleButton key={i} value={value["url"]}>
+              <Tooltip title={key}>{value["icon"]}</Tooltip>
             </ToggleButton>
           ))}
         </ToggleButtonGroup>

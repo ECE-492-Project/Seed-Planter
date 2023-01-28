@@ -1,13 +1,10 @@
-import { Props } from "@/pages";
-import { LatLngExpression } from "leaflet";
+import { DEFAULT_CENTER, Props } from "@/pages";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Coordinates from "./Coordinates";
 import { Legend } from "./Legend";
 import LocationMarker from "./LocationMarker";
 import { NAV_HEIGHT } from "./Navbar";
-
-export const DEFAULT_CENTER: LatLngExpression = [53.527, -113.53];
 
 export default function Map(props: Props) {
   const { mapTile } = props;
@@ -27,7 +24,7 @@ export default function Map(props: Props) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url={mapTile}
       />
-      <LocationMarker />
+      <LocationMarker {...props} />
 
       <Coordinates {...props} />
       <Legend />

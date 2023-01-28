@@ -1,11 +1,11 @@
 import { Props } from "@/pages";
 import { styled } from "@mui/material";
-import { LatLng, LeafletMouseEvent } from "leaflet";
-import { useState } from "react";
+import { LatLngLiteral, LeafletMouseEvent } from "leaflet";
 import {
   CircleMarker,
   LayerGroup,
   LayersControl,
+  Polyline,
   Tooltip,
   useMapEvents,
 } from "react-leaflet";
@@ -17,11 +17,15 @@ const SeedMarker = styled(CircleMarker)(({ theme }) => ({
 export interface Coordinate {
   seed: string;
   numSeeds: number;
-  latlng: LatLng;
+  latlng: LatLngLiteral;
 }
-export default function Coordinates({ seed, numSeeds }: Props) {
-  const [coords, setCoords] = useState<Coordinate[]>([]);
-
+export default function Coordinates({
+  seed,
+  numSeeds,
+  coords,
+  setCoords,
+  path,
+}: Props) {
   const map = useMapEvents({
     click({ latlng }) {
       // Add coordinate on map click
@@ -65,6 +69,15 @@ export default function Coordinates({ seed, numSeeds }: Props) {
           </LayerGroup>
         </LayersControl.Overlay>
       ))}
+
+      <LayersControl.Overlay checked name="Path">
+        <LayerGroup>
+          <Polyline
+            positions={path}
+            pathOptions={{ color: "lime", weight: 7 }}
+          />
+        </LayerGroup>
+      </LayersControl.Overlay>
     </LayersControl>
   );
 }
