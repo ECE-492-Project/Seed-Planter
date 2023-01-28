@@ -4,6 +4,7 @@ const pathPrefix =
   process.env.NODE_ENV === "production" ? "/Seed-Planting-Robot" : "";
 
 const nextConfig = {
+  basePath: pathPrefix,
   reactStrictMode: true,
   images: {
     unoptimized: true,
@@ -12,7 +13,6 @@ const nextConfig = {
   env: {
     pathPrefix,
   },
-  basePath: pathPrefix,
 };
 
 module.exports = nextConfig;
