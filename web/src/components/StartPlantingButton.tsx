@@ -4,10 +4,27 @@ import { Button, ButtonProps, CircularProgress } from "@mui/material";
 import { computePath } from "./geo";
 
 /**
+ * Web Bluetooth API: https://developer.chrome.com/articles/bluetooth/
+ * https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice
+ */
+const connectToRobot = async () => {
+  try {
+    const device = await (navigator as any).bluetooth.requestDevice({
+      // filters: [{ name: "raspberrypi" }], // filter by device name
+      acceptAllDevices: true, // accept all devices
+      optionalServices: ["battery_service"], // Required to access service later.
+    });
+    console.log("DEVICE:", device);
+  } catch (e) {
+    console.error(e);
+  }
+};
+/**
  * Transmit data to the robot
  */
 const transmitData = (data: any) => {
   console.log("Transmitting data:", data);
+  connectToRobot();
 };
 
 export const handleSubmit =
