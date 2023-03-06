@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 
 // ADD SEEDS HERE
+
 export const SEED_OPTIONS = ["Seed 1", "Seed 2", "Seed 3", "Seed 4"];
 export const SEED_COLORS = ["red", "green", "blue", "orange"];
 
