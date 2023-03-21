@@ -19,10 +19,10 @@ const onDisconnected = (event: any) => {
 const connectToRobot = async () => {
   try {
     const device = await (navigator as any).bluetooth.requestDevice({
-      // filters: [{ name: "raspberrypi" }], // filter by device name
-      acceptAllDevices: true, // accept all devices
-      // optionalServices: ["battery_service"], // Required to access service later.
-      // filters: [{ services: ["battery_service"] }],
+      filters: [{ name: "SPR" }], // filter by device name
+      // acceptAllDevices: true, // accept all devices
+      // optionalServices: ["org.bluez.GattService1"], // Required to access service later.
+      // filters: [{ name: ["rpi-gatt-server"] }],
     });
 
     // On disconnect events
