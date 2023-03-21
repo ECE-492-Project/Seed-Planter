@@ -15,12 +15,18 @@ const onDisconnected = (event: any) => {
  * Web Bluetooth API: https://developer.chrome.com/articles/bluetooth/
  * https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice
  * Tutorial: https://rebeccamdeprey.com/blog/interact-with-bluetooth-devices-using-the-web-bluetooth-api
+ * Pi server code: https://github.com/mengguang/pi-ble-uart-server
+ *    And the tutorial: https://scribles.net/creating-ble-gatt-server-uart-service-on-raspberry-pi/
  */
-const connectToRobot = async () => {
+const transmitData = async (data: any) => {
+  console.log("Transmitting data:", data);
   // IDs defined on raspberry pi
   const SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-  const RX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
-  const TX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+  const TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // reversed uuid from on the pi
+  const RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
+  // const SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
+  // const TX_CHARACTERISTIC_UUID = "12345678-1234-5678-1234-56789abcdef1"; // reversed uuid from on the pi
+  // const RX_CHARACTERISTIC_UUID = TX_CHARACTERISTIC_UUID;
 
   try {
     const device = await (navigator as any).bluetooth.requestDevice({
@@ -56,32 +62,31 @@ const connectToRobot = async () => {
     );
     console.log("txCharacteristic:", txCharacteristic);
 
-    // Reading the value
-    const reading = await rxCharacteristic.readValue();
-    console.log("READ:", reading.getUint8(0) + "%");
+    // // Reading the value
+    // const reading = await rxCharacteristic.readValue();
+    // console.log("READ:", reading.getUint8(0) + "%");
 
     // Notification on receiver
-    rxCharacteristic.startNotifications();
+    rxCharacteristic
+      .startNotifications()
+      .catch((e: any) => console.error("Failed to start notifications:", e))
+      .then(() => console.log("Notifications started"));
     rxCharacteristic.addEventListener(
       "characteristicvaluechanged",
       handleCharacteristicValueChanged
     );
 
-    return txCharacteristic;
+    // Writing value to transmitter
+    const json = JSON.stringify(data);
+    const txValue = Buffer.from(json);
+    console.log("txValue", txValue);
+    txCharacteristic
+      .writeValueWithoutResponse(txValue)
+      .then(() => console.log("Wrote value:", txValue.toString()))
+      .catch((e: any) => console.error("Failed to write value:", e));
   } catch (e) {
     console.error(e);
-    return null;
   }
-};
-/**
- * Transmit data to the robot
- */
-const transmitData = async (data: any) => {
-  console.log("Transmitting data:", data);
-  const tx = await connectToRobot();
-  // Writing value to transmitter
-  const resetEnergyExpended = Uint8Array.of(1);
-  tx.writeValue(resetEnergyExpended);
 };
 
 export const handleSubmit =
