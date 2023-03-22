@@ -2,11 +2,13 @@ import { Props } from "@/pages";
 import { PlayCircleOutline } from "@mui/icons-material";
 import { Button, ButtonProps, CircularProgress } from "@mui/material";
 import { computePath } from "./geo";
+import { Status } from "./RobotStatus";
 
-const handleCharacteristicValueChanged = (event: any) => {
-  const value = event.target.value.getUint8(0);
-  console.log("CHANGED:", value + "%");
-};
+const handleCharacteristicValueChanged =
+  (setRobotStatus: (s: Status) => void) => (event: any) => {
+    const batteryLevel = parseInt(event.target.value.getUint8(0));
+    setRobotStatus({ batteryLevel });
+  };
 const onDisconnected = (event: any) => {
   const device = event.target;
   alert(`Device ${device.name} is disconnected.`);
@@ -19,7 +21,7 @@ let server: any; // Connect to device server
  * Tutorial: https://rebeccamdeprey.com/blog/interact-with-bluetooth-devices-using-the-web-bluetooth-api
 
  */
-const transmitData = async (data: any) => {
+const transmitData = async (data: any, setRobotStatus: (s: Status) => void) => {
   console.log("Transmitting data:", data);
   // IDs defined on raspberry pi
   // Code 1: Pi server code: https://github.com/mengguang/pi-ble-uart-server
@@ -81,7 +83,7 @@ const transmitData = async (data: any) => {
       .then(() => console.log("Notifications started"));
     rxCharacteristic.addEventListener(
       "characteristicvaluechanged",
-      handleCharacteristicValueChanged
+      handleCharacteristicValueChanged(setRobotStatus)
     );
 
     // Writing value to transmitter
@@ -106,7 +108,11 @@ export const handleSubmit =
     coords,
     myPosition,
     setPath,
-  }: Props & { setLoading: (loading: boolean) => void }) =>
+    setRobotStatus,
+  }: Props & {
+    setLoading: (loading: boolean) => void;
+    setRobotStatus: (s: Status) => void;
+  }) =>
   async (e: any) => {
     e.preventDefault(); // prevent page reload
     setLoading(true);
@@ -118,7 +124,7 @@ export const handleSubmit =
     // Draw path on map
     setPath(pathCoords);
 
-    await transmitData(pathCoords);
+    await transmitData(pathCoords, setRobotStatus);
 
     setLoading(false);
   };

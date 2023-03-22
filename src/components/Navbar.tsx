@@ -4,6 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
 import Controls from "./Controls";
+import RobotStatus, { Status } from "./RobotStatus";
 import StartPlantingButton, { handleSubmit } from "./StartPlantingButton";
 
 export const NAV_HEIGHT = "100px";
@@ -12,11 +13,12 @@ const NAV_BGCOLOR = "#f3dabc";
 export default function Navbar(props: Props) {
   const [loading, setLoading] = useState(false);
   const { coords } = props;
+  const [robotStatus, setRobotStatus] = useState<Status>({ batteryLevel: 100 });
 
   return (
-    <form onSubmit={handleSubmit({ ...props, setLoading })}>
+    <form onSubmit={handleSubmit({ ...props, setLoading, setRobotStatus })}>
       <AppBar
-        position="static"
+        position="relative"
         variant="outlined"
         elevation={0}
         sx={{ bgcolor: NAV_BGCOLOR }}
@@ -46,6 +48,8 @@ export default function Navbar(props: Props) {
             loading={loading}
             disabled={loading || coords.length == 0}
           />
+
+          <RobotStatus status={robotStatus} />
         </Toolbar>
       </AppBar>
     </form>
