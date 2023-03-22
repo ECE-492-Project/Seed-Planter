@@ -4,56 +4,64 @@ import { Button, ButtonProps, CircularProgress } from "@mui/material";
 import { computePath } from "./geo";
 
 const handleCharacteristicValueChanged = (event: any) => {
-  console.log("CHANGED:", event.target.value.getUint8(0) + "%");
+  const value = event.target.value.getUint8(0);
+  console.log("CHANGED:", value + "%");
 };
 const onDisconnected = (event: any) => {
   const device = event.target;
   alert(`Device ${device.name} is disconnected.`);
 };
 
+let server: any; // Connect to device server
 /**
  * Web Bluetooth API: https://developer.chrome.com/articles/bluetooth/
  * https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth/requestDevice
  * Tutorial: https://rebeccamdeprey.com/blog/interact-with-bluetooth-devices-using-the-web-bluetooth-api
- * Pi server code: https://github.com/mengguang/pi-ble-uart-server
- *    And the tutorial: https://scribles.net/creating-ble-gatt-server-uart-service-on-raspberry-pi/
+
  */
 const transmitData = async (data: any) => {
   console.log("Transmitting data:", data);
   // IDs defined on raspberry pi
-  const SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-  const TX_CHARACTERISTIC_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; // reversed uuid from on the pi
-  const RX_CHARACTERISTIC_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-  // const SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
-  // const TX_CHARACTERISTIC_UUID = "12345678-1234-5678-1234-56789abcdef1"; // reversed uuid from on the pi
-  // const RX_CHARACTERISTIC_UUID = TX_CHARACTERISTIC_UUID;
+  // Code 1: Pi server code: https://github.com/mengguang/pi-ble-uart-server
+  //     And the tutorial: https://scribles.net/creating-ble-gatt-server-uart-service-on-raspberry-pi/
+  // Code 2:https://github.com/PunchThrough/espresso-ble and tutorial: https://punchthrough.com/creating-a-ble-peripheral-with-bluez/
+  const SERVICE_UUID = "12345678-1234-5678-1234-56789abcdef0";
+  const BATTERY_SERVICE_UUID = "battery_service";
+  const TX_CHARACTERISTIC_UUID = "12345678-1234-5678-1234-56789abcdef1"; // reversed uuid from on the pi
+  const RX_CHARACTERISTIC_UUID = "battery_level";
 
   try {
-    const device = await (navigator as any).bluetooth.requestDevice({
-      filters: [
-        {
-          name: "SPR",
-          id: "TDh83w3Qnb1C+KOkhyvMUw==",
-        },
-      ], // filter by device name
-      // acceptAllDevices: true, // accept all devices
-      optionalServices: [SERVICE_UUID], // Required to access service later.
-      // filters: [{ services: ["rpi-gatt-server"] }],
-    });
+    if (!server) {
+      const device = await (navigator as any).bluetooth.requestDevice({
+        filters: [
+          {
+            name: "SPR",
+            id: "TDh83w3Qnb1C+KOkhyvMUw==",
+          },
+        ], // filter by device name
+        // acceptAllDevices: true, // accept all devices
+        optionalServices: [SERVICE_UUID, BATTERY_SERVICE_UUID], // Required to access service later.
+        // filters: [{ services: ["rpi-gatt-server"] }],
+      });
 
-    // On disconnect events
-    device.addEventListener("gattserverdisconnected", onDisconnected);
-    window.onbeforeunload = function () {
-      // On page leave, disconnect
-      device.gatt.disconnect();
-    };
+      // On disconnect events
+      device.addEventListener("gattserverdisconnected", onDisconnected);
+      window.onbeforeunload = function () {
+        // On page leave, disconnect
+        device.gatt.disconnect();
+      };
 
-    console.log("Device:", device);
-    const server = await device.gatt.connect();
-    console.log("Server:", server);
+      console.log("Device:", device);
+      server = await device.gatt.connect();
+      console.log("Server:", server);
+    }
+
     const service = await server.getPrimaryService(SERVICE_UUID);
+    const batteryService = await server.getPrimaryService(BATTERY_SERVICE_UUID);
     console.log("Service:", service);
-    const rxCharacteristic = await service.getCharacteristic(
+    console.log("Battery Service:", batteryService);
+
+    const rxCharacteristic = await batteryService.getCharacteristic(
       RX_CHARACTERISTIC_UUID
     );
     console.log("rxCharacteristic:", rxCharacteristic);
@@ -81,8 +89,11 @@ const transmitData = async (data: any) => {
     const txValue = Buffer.from(json);
     console.log("txValue", txValue);
     txCharacteristic
-      .writeValueWithoutResponse(txValue)
-      .then(() => console.log("Wrote value:", txValue.toString()))
+      .writeValueWithResponse(txValue)
+      // .writeValueWithoutResponse(txValue)
+      .then((resp: any) =>
+        console.log("Wrote value:", txValue.toString(), " ; resp:", resp)
+      )
       .catch((e: any) => console.error("Failed to write value:", e));
   } catch (e) {
     console.error(e);
